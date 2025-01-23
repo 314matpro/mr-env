@@ -6,5 +6,5 @@ description="Gets you the system path to the bash library of this environment"
 . .cmd
 . .errors
 
-export GO_PATH="${AMR_ENV_BASH}"
+export GO_PATH="$(path --env)"
 execute path path "$@"
