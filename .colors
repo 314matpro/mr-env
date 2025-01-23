@@ -1,0 +1,24 @@
+#!/bin/bash
+
+if [ "${BLOCK_FORMATTING}" != "blocked" ]; then
+	none="\033[0m"
+	cyan="\033[1;96m"
+	blue="\033[1;34m"
+	green="\033[1;92m"
+	yellow="\033[1;93m"
+	red="\033[0;91m"
+else
+	none=""
+	cyan=""
+	blue=""
+	green=""
+	yellow=""
+	red=""
+fi
+
+function color
+{
+	if [ "${BLOCK_FORMATTING}" != "blocked" ]; then
+		printf "${1}"
+	fi
+}

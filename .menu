@@ -1,0 +1,15 @@
+#!/bin/bash
+
+. .colors
+
+function menuDescription
+{
+	_description="${1}"
+	_scripts=`ls`
+	for _script in ${_scripts}; do
+		_scriptArgs=`"./${_script}" .args`
+		_scriptDescription=`"./${_script}" .description`
+		_description="${_description}\n    ${yellow}${_script}${none} : ${green}${_scriptArgs}${none} - ${blue}${_scriptDescription}${none}"
+	done
+	echo "${_description}"
+}

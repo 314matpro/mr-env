@@ -1,0 +1,67 @@
+#!/bin/bash
+
+args="<string> <search string>"
+description="Finds the index of the first search string"
+
+. .cmd
+
+requires 2 arguments
+
+function first
+{
+	firstString="${1}"
+	firstStringLength="${#1}"
+	findString="${2}"
+
+	firstIndex=-1
+	firstCount=0
+	while [ $firstIndex -lt 0 ] && [ $firstCount -lt $firstStringLength ]; do
+		firstStringChar=${firstString:firstCount:1}
+		if [ "${firstStringChar}" == "${findString}" ]; then
+			firstIndex=$firstCount;
+		fi
+		firstCount=$((firstCount+1))
+	done
+
+	echo $firstIndex;
+}
+
+string="${1}"
+sub="${2}"
+index=-1
+
+subCount="${#sub}"
+if [ $subCount -lt 2 ]; then
+	if [[ "${string}" == *"${sub}"* ]]; then
+		index=`first "${string}" "${sub}"`
+	fi
+else
+	subChar="${sub:0:1}"
+	indexOffset=0
+	while [[ "${string}" == *"${sub}"* ]]; do
+		stringCount=${#string}
+		cutIndex=0
+
+		tmpIndex=`first "${string}" "${subChar}"`
+		if [ $((tmpIndex+subCount)) -lt $((stringCount+1)) ]; then
+			if [ "${string:tmpIndex:subCount}" == "${sub}" ]; then
+				index=$((tmpIndex+realIndex))
+				cutIndex=$stringCount
+			else
+				cutIndex=$((tmpIndex+1))
+			fi
+		else
+			cutIndex=$stringCount
+		fi
+
+		if [ $cutIndex -lt $stringCount ]; then
+			realIndex=$((realIndex+cutIndex))
+			cutLength=$((stringCount-cutIndex))
+			string="${string:cutIndex:cutLength}"
+		else
+			string=""
+		fi
+	done
+fi
+
+echo "${index}"

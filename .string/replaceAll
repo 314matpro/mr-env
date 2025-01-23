@@ -1,0 +1,22 @@
+#!/bin/bash
+
+args="<string> <search string> <replace string>"
+description="Replaces all the instances of the search string with replace"
+
+. .cmd
+
+requires 3 arguments
+
+ORIGINAL="${1}"
+REPLACED=""
+FROM="${2}"
+TO="${3}"
+
+while [[ "${ORIGINAL}" == *"${FROM}"* ]]; do
+	SUB=`string before "${ORIGINAL}" "${FROM}"`
+	REPLACED="${REPLACED}${SUB}${TO}"
+	ORIGINAL=`string after "${ORIGINAL}" "${FROM}"`
+done
+REPLACED="${REPLACED}${ORIGINAL}"
+
+echo "${REPLACED}"

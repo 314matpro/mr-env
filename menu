@@ -1,0 +1,17 @@
+#!/bin/bash
+
+args="[<cmd> <cmd> <cmd> ...]"
+description="Menu"
+
+. .cmd
+. .colors
+. .menu
+
+libsPath=`path lib "$@"`
+if [[ "`pwd`" != "${libsPath}"* ]]; then
+	cd "${libsPath}"
+fi
+
+description=`menuDescription "${description} for ${cyan}$*${blue} -->"`
+echo -e "${green}${args}${none}"
+echo -e "${blue}${description}${none}"

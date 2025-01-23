@@ -1,0 +1,36 @@
+#!/bin/bash
+
+args="<string> <search string>"
+description="Finds the instance count of the search string within string"
+
+. .cmd
+. .errors
+
+requires 2 arguments
+
+string="${1}"
+search="${2}"
+
+searchSize=${#search}
+if [ ${#string} -lt ${#search} ]; then
+	echo "0"
+elif [ "${#string}" == "${#search}" ]; then
+	if [ "${string}" == "${search}" ]; then
+		echo "1"
+	else
+		echo "0"
+	fi
+else
+	count=0
+	index=0
+	lastIndex=$((${#string}-${#search}))
+	while [ $index -le $lastIndex ]; do
+		if [ "${search}" == "${string:index:searchSize}" ]; then
+			count=$((count+1))
+			index=$((index+searchSize))
+		else
+			index=$((index+1))
+		fi
+	done
+	echo "${count}"
+fi

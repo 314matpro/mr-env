@@ -1,0 +1,10 @@
+#!/bin/bash
+
+args=`path path .args`
+description=`path path .description`
+
+. .cmd
+. .errors
+
+export PATH_IS_FILE="true"
+execute this "$@"

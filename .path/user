@@ -1,0 +1,10 @@
+#!/bin/bash
+
+args="[<path> ... <path>]"
+description="Gets you the system path to current user"
+
+. .cmd
+. .errors
+
+export GO_PATH="${HOME}"
+execute path path "$@"

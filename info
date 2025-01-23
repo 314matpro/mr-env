@@ -1,0 +1,11 @@
+#!/bin/bash
+
+args=""
+description="Gets info about script"
+
+. .cmd
+. .info
+
+echo "${script_path}"
+echo "${script_dir}"
+echo "${script_name}"

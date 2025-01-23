@@ -1,0 +1,23 @@
+#!/bin/bash
+
+args="<string> <search string>"
+description="Gets everything after the end of the search string"
+
+. .cmd
+
+requires 2 arguments
+
+if [[ "${1}" == *"${2}"* ]]; then
+	index=`string indexof "${1}" "${2}"`
+	if [ $index -lt 0 ]; then
+		echo ""
+	else
+		subCount=${#2}
+		stringCount=${#1}
+		afterIndex=$((index+subCount))
+		afterLength=$((stringCount-afterIndex))
+		echo "${1:afterIndex:afterLength}"
+	fi
+else
+	echo ""
+fi

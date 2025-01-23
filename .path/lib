@@ -1,0 +1,10 @@
+#!/bin/bash
+
+args="[<path> ... <path>]"
+description="Gets you the system path to the bash library of this environment"
+
+. .cmd
+. .errors
+
+export GO_PATH="${AMR_ENV_BASH}"
+execute path path "$@"

@@ -1,0 +1,11 @@
+#!/bin/bash
+
+args="<arg 0> [<arg 1> ... <arg n>]"
+description="Blocks formatted output from entering text on child commands"
+
+. .cmd
+
+requires 1 arguments
+
+export BLOCK_FORMATTING="blocked"
+exec "$@"

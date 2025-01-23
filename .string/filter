@@ -1,0 +1,37 @@
+#!/bin/bash
+
+args="<filter> [<string 1>...<string n>]"
+description="Displays all strings matching filter"
+
+. .cmd
+
+requires 1 arguments
+
+expression="${1}"
+shift
+
+comparison=""
+substring=""
+if [ `string startsWith "${expression}" "*"` == "true" ]; then
+	substring=`string after "${expression}" "*"`
+	if [ `string endsWith "${expression}" "*"` == "true" ]; then
+		substring=`string before "${expression}" "*"`
+		comparison="full"
+	else
+		comparison="ends"
+	fi
+elif [ `string endsWith "${expression}" "*"` == "true" ]; then
+	substring=`string before "${expression}" "*"`
+	comparison="starts"
+fi
+
+while [ "${1}" != "" ]; do
+	if [ "${comparison}" == "full" ] && [[ "${1}" == *"${substring}"* ]]; then
+		echo "${1}"
+	elif [ "${comparison}" == "starts" ] && [[ "${1}" == "${substring}"* ]]; then
+		echo "${1}"
+	elif [ "${comparison}" == "ends" ] && [[ "${1}" == *"${substring}" ]]; then
+		echo "${1}"
+	fi
+	shift
+done

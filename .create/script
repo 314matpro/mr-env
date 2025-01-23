@@ -1,0 +1,17 @@
+#!/bin/bash
+
+args="<script file>"
+description="Creates a script file with executable privileges"
+
+. .cmd
+
+requires 1 arguments
+
+if [ ! -e "${1}" ]; then
+        touch "${1}"
+        printf "#!/bin/bash\n\n" > "${1}"
+        echo "" >> "${1}"
+fi
+
+chmod u+x "${1}"
+vim "${1}" +3

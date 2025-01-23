@@ -1,0 +1,23 @@
+#!/bin/bash
+
+. .colors
+
+function handleError
+{
+	error=$1
+	shift
+	
+	if [ $error -ne 0 ]; then
+		unset IFS
+		echo -e "${red}Failed${blue} with error code ${red}$error${blue} while executing\n${none}$*\n"
+		exit $error
+	fi
+}
+function execute
+{
+	if [ "${ERROR_MODE}" == "verbose" ]; then
+		echo "$*" >&2
+	fi
+	"$@"
+	handleError $? "$@"
+}

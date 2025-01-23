@@ -1,0 +1,44 @@
+#!/bin/bash
+
+current_dir=`pwd`
+. .info
+. .menu
+. .errors
+
+args=""
+if [ "${1}" == "" ] || [ "${1}" == "--help" ]; then
+	description="${description} -->"
+
+	. .colors
+	if [ -e "${script_dir}/.${script_name}" ]; then
+		cd "${script_dir}/.${script_name}"
+		description=`menuDescription "${description}"`
+		cd "${current_dir}"
+	fi
+elif [ "$*" == "" ]; then
+	"${0}" --help
+elif [ "${1}" == ".args" ]; then
+	echo ".."
+elif [ "${1}" != ".description" ]; then
+	path="${script_dir}/.${script_name}/${1}"
+	if [ -e "${path}" ]; then
+		shift
+
+		dir=`basename "${script_dir}"`
+		if [ "${dir}" == "bash" ]; then
+				export LIB_PATH="${script_name} "
+		else
+				export LIB_PATH="${LIB_PATH}${script_name} "
+		fi
+
+		exec "${path}" "$@"
+	else
+		. .colors
+		echo -e "${yellow}${1} ${red}does not exist${none}" >&2
+		execute exit 1
+	fi
+fi
+
+. .cmd
+
+requires 1 arguments

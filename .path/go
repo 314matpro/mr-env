@@ -1,0 +1,21 @@
+#!/bin/bash
+
+args=""
+description="Goes to the path directory that feeds alias 'gd'"
+
+. .cmd
+. .errors
+. .info
+
+TMP_PATH_IS_FILE="${PATH_IS_FILE}"
+TMP_INTERACTIVE="${INTERACTIVE}"
+unset PATH_IS_FILE
+export INTERACTIVE="false"
+export GO_PATH="${script_dir}"
+export INTERACTIVE="${TMP_INTERACTIVE}"
+unset TMP_INTERACTIVE
+if [ "${TMP_PATH_IS_FILE}" != "" ]; then
+	export PATH_IS_FILE="${TMP_PATH_IS_FILE}"
+fi
+
+execute this path "$@"

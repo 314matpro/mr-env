@@ -1,0 +1,53 @@
+#!/bin/bash
+
+function expander
+{
+        cmd="${1}"
+        shift
+        innerCmd="${1}"
+        shift
+        value=`${innerCmd} "$@"`
+	rc=$?
+	if [ $rc -ne 0 ]; then
+		echo -e "${value}"
+		return $rc
+	else
+	        "${cmd}" "${value}"
+	fi
+}
+
+if [ "${HOME}" == "" ]; then
+	HOME=`cd ~; pwd`
+fi
+
+if [ -e /cygdrive ]; then
+        cygwinUserProfile=`cygpath -u "${USERPROFILE}"`
+        userProfile="${cygwinUserProfile}"
+else
+        userProfile="${HOME}"
+fi
+
+export AMR_ENV_CFG_VAR="${AMR_ENV_CFG_VAR:-amr.env.var}"
+if [ -f "${AMR_ENV_CFG}/${AMR_ENV_CFG_VAR}" ]; then
+	source "${AMR_ENV_CFG}/${AMR_ENV_CFG_VAR}"
+fi
+
+export AMR_ENV_CFG_ALIAS="${AMR_ENV_CFG_ALIAS:-amr.env.alias}"
+if [ -f "${AMR_ENV_CFG}/${AMR_ENV_CFG_ALIAS}" ]; then
+	IFS=$'\n'
+	aliases=`cat "${AMR_ENV_CFG}/${AMR_ENV_CFG_ALIAS}"`
+	for aliasDef in ${aliases}; do
+		aliasName=`echo "${aliasDef}" | cut -d $'\t' -f1`
+		aliasValue=`echo "${aliasDef}" | cut -d $'\t' -f2`
+		if [ "${aliasDef}" != "" ] && [ "${aliasName}" != "" ] && [ "${aliasValue}" != "" ]; then
+			alias "${aliasName}=${aliasValue}"
+		fi
+	done
+	unset IFS
+	unset aliases
+	unset aliasDef
+	unset aliasName
+	unset aliasValue
+fi
+
+export AMR_ENV_CFG_PATH="${AMR_ENV_CFG_PATH:-amr.env.path}"

@@ -1,0 +1,160 @@
+#!/bin/bash
+
+args="<srch>[:#] [<srch>[:#] ...]"
+description="Gets the path for the supplied search string, along each entry in path"
+
+. .cmd
+. .errors
+
+if [ "${GO_PATH}" != "" ]; then
+	execute cd "${GO_PATH}"
+fi
+
+if [ "${PATH_IS_FILE}" == "true" ]; then
+	file=1
+else
+	file=0
+fi
+
+if [ "${INTERACTIVE}" == "true" ]; then
+	interactive=1
+else
+	interactive=0
+fi
+
+if [ $file -gt 0 ] && [ $# -gt $file ]; then
+	more=1
+elif [ $file -eq 0 ]; then
+	if [ $# -gt 0 ]; then
+		more=2
+	else
+		more=1
+	fi
+else
+	more=0
+fi
+
+while [ $more -gt 0 ]; do
+	if [ "${1}" == "-i" ] || [ "${1}" == "--interactive" ]; then
+		if [ "${INTERACTIVE}" == "true" ]; then
+			interactive=1
+		fi
+		shift
+	elif [ "${1}" == "-n" ] || [ "${1}" == "--non-interactive" ]; then
+		interactive=0
+		shift
+	else
+		count=1
+		dirlist=`ls -a1`
+		found=""
+		if [[ "${1}" == *":"* ]]; then
+			path=`echo "${1}" | cut -d : -f1`
+			number=`echo "${1}" | cut -d : -f2`
+		elif [ $# -eq 0 ]; then
+			path="--list"
+			file=2
+		else
+			path="${1}"
+			number=1
+		fi
+		if [[ "${path}" == *"/"* ]] && [ -e "${path}" ]; then
+			if [ $interactive -gt 0 ]; then
+				echo "${path}" >&2
+			fi
+			found="${path}"
+		elif [ "${path}" == "." ]; then
+			if [ $interactive -gt 0 ]; then
+				echo "./" >&2
+			fi
+			found="."
+		else
+			IFS=$'\n'
+			for dir in ${dirlist}; do
+				if [ -d "${dir}" ]; then
+					print=0
+					if [ "${path}" == "-l" ] || [ "${path}" == "--list" ]; then
+						found="."
+						print=1
+					elif [[ "${dir}" == *"${path}"* ]]; then
+						if [ "${found}" == "" ] && [ $count -eq $number ]; then
+							found="${dir}"
+						fi
+						print=1
+					fi
+					if [ $print -gt 0 ]; then
+						if [ $interactive -gt 0 ]; then
+							echo "${count}: ${dir}" >&2
+						fi
+						count=$((count+1))
+					fi
+				fi
+			done
+			unset IFS
+			if [ $interactive -gt 0 ]; then
+				echo "/" >&2
+			fi
+		fi
+		if [ "${found}" != "" ]; then
+			#realpath "${found}"
+			cd "${found}"
+			shift
+		else
+			realPath=`realpath "${path}"`
+			echo "Failed to find path: ${realPath} at ${path}" >&2
+			exit 1
+		fi
+	fi
+	if [ $file -gt 0 ] && [ $# -gt $file ]; then
+		more=1
+	elif [ $file -eq 0 ]; then
+		if [ $# -gt 0 ]; then
+			more=2
+		elif [ $more -eq 1 ]; then
+			more=0
+		else
+			more=1
+		fi
+	else
+		more=0
+	fi
+done
+	
+if [ $file -eq 1 ]; then
+	count=1
+	filelist=`ls -a1`
+	found=""
+	if [[ "${1}" == *":"* ]]; then
+		path=`echo "${1}" | cut -d : -f1`
+		number=`echo "${1}" | cut -d : -f2`
+	else
+		path="${1}"
+		number=1
+	fi
+
+	if [ $interactive -gt 0 ]; then
+		echo "/" >&2
+	fi
+	IFS=$'\n'
+	for entry in ${filelist}; do
+		if [ ! -d "${entry}" ] && [[ "${entry}" == *"${path}"* ]]; then
+			if [ $interactive -gt 0 ]; then
+				echo "${count}: ${entry}" >&2
+			fi
+			if [ "${found}" == "" ] && [ $count -eq $number ]; then
+				found="${entry}"
+			fi
+			count=$((count+1))
+		fi
+	done
+	unset IFS
+	
+	path=`realpath "${found}"`
+	if [ "${found}" != "" ]; then
+		echo "${path}"
+	else
+		echo "Failed to find file: ${found}" >&2
+		exit 1
+	fi
+else
+	realpath .
+fi

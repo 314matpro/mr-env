@@ -1,0 +1,17 @@
+#!/bin/bash
+
+description="Path shortcuts"
+
+. .info
+
+if [ "${1}" == "--env" ]; then
+	printf "${script_dir}"
+	exit 0
+fi
+
+if [ "${1}" == "-i" ] || [ "${1}" == "--interactive" ]; then
+	export INTERACTIVE="true"
+	shift
+fi
+
+. .lib
